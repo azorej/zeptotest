@@ -7,7 +7,7 @@
 
 #include "application.hpp"
 
-#include "elements/mainwindow.hpp"
+#include "elements/game_window.h"
 
 #include "subsystems/graphic.hpp"
 #include "subsystems/scheduler.hpp"
@@ -33,13 +33,28 @@ void application_t::on_shown()
 {
 	start();
 
-	_main_window.reset(new main_window_t());
+    auto& graphic = subsystem<subsystems::graphic_t>();
+    float aspect_ratio = graphic.get_screen_ratio();
+
+    vec2 size;
+    if(aspect_ratio>1)
+    {
+        size.x = 100.f;
+        size.y = 100.f * aspect_ratio;
+    }
+    else
+    {
+    	size.x = 100.f / aspect_ratio;
+    	size.y = 100.f;
+    }
+
+    _main_window.reset(new game_window_t(size));
 }
 
 void application_t::on_close()
 {
-	stop();
-	_main_window.reset();
+    _main_window.reset();
+	stop();	
 }
 
 void application_t::on_save_state()
@@ -52,7 +67,7 @@ void application_t::tick()
 	subsystem<subsystems::scheduler_t>().tick();
 }
 
-void application_t::on_touch(raw_touch_arr const& touches)
+void application_t::on_touch(AInputEvent* event)
 {
-	subsystem<subsystems::input_controller_t>().on_touch(touches);
+	subsystem<subsystems::input_controller_t>().on_touch(event);
 }

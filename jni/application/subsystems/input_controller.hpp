@@ -11,31 +11,29 @@
 #include "defs.hpp"
 #include "utils/noncopyable.hpp"
 #include "utils/subsystem.hpp"
-#include "elements/base_element.hpp"
-#include "application.hpp"
+#include "utils/vecmath.hpp"
+#include "touch.hpp"
 
-#include <list>
-#include <chrono>
+#include "android/input.h"
 
-struct touch_t
-{
-	int32_t id;
-	float begin;
-	float end;
-};
+#include <map>
 
 namespace subsystems {
 
 class input_controller_t  : private noncopyable_t, public subsystem_t
 {
 public:
+	input_controller_t();
+
 	virtual void start() override;
 	virtual void stop() override;
 
-	void on_touch(raw_touch_arr raw_touches);
+	void on_touch(AInputEvent* event);
 
 private:
-	std::list<touch_t> _touches;
+	std::map<int32_t, touch_t> _touches;
+
+	bool _is_enabled;
 };
 
 } /* namespace subsystems */

@@ -17,6 +17,14 @@
 #include "vecmath.hpp"
 
 //--------------------------------------------------------------------------------
+// vec2
+//--------------------------------------------------------------------------------
+vec2::vec2(const vec3& vec)
+{
+	x = vec.x;
+	y = vec.y;
+}
+//--------------------------------------------------------------------------------
 // vec3
 //--------------------------------------------------------------------------------
 vec3::vec3(const vec4& vec) {
@@ -78,6 +86,30 @@ vec3 mat3::operator *(const vec3& rhs) const
 	ret.z = rhs.x * f[2] + rhs.y * f[7] + rhs.z * f[8];
 
 	return ret;
+}
+
+mat3& mat3::inverse()
+{
+    mat3 ret;
+    float det_1 = f[0] * f[4] - f[1] * f[3];
+    if (det_1 == 0.0) {
+    //Error
+    } else {
+        det_1 = 1.0f / det_1;
+        ret.f[0] = f[4] * det_1;
+        ret.f[1] = -f[1] * det_1;
+        ret.f[3] = -f[3] * det_1;
+        ret.f[4] = f[0] * det_1;
+
+        ret.f[6] = (f[3] * f[7] - f[4] * f[6]) * det_1;
+        ret.f[7] = -(f[0] * f[7] - f[1] * f[6]) * det_1;
+
+        ret.f[2] = 0.f;
+        ret.f[5] = 0.f;
+        ret.f[8] = 1.f;
+    }
+    *this = ret;
+    return *this;
 }
 
 mat3 mat3::view_to_world(float coordinate_factor, float aspect_ratio)

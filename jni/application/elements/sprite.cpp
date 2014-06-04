@@ -13,7 +13,7 @@
 #include "graphics/texture_shader.hpp"
 
 sprite_t::sprite_t(vec2 const& position, vec2 const& size)
-: base_element_t(position, size)
+: element_if(position, size)
 {
 }
 

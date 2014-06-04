@@ -14,17 +14,7 @@ static int32_t engine_handle_input(struct android_app* and_app, AInputEvent* eve
 
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
 	{
-		auto count = AMotionEvent_getPointerCount(event);
-
-		raw_touch_arr touches(count);
-		for(size_t i = 0; i<count; ++i)
-		{
-			touches[i].id = AMotionEvent_getPointerId(event, i);
-			touches[i].x = AMotionEvent_getX(event, 0);
-			touches[i].y = AMotionEvent_getY(event, 0);
-		}
-
-		if(!touches.empty()) app->on_touch(touches);
+		app->on_touch(event);
 
         return 1;
     }

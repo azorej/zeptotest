@@ -22,27 +22,28 @@ namespace subsystems {
 
 	void scheduler_t::tick()
 	{
-        auto cur_time = std::chrono::steady_clock::now();
-
         auto it=_tasks.begin(), end=_tasks.end();
         while(it!=end)
         {
             //is task alive
             if(auto task_locked = it->lock())
             {
+            	auto cur_time = std::chrono::steady_clock::now();
                 //is it time to start task
                 if(cur_time > task_locked->next_launch)
                 {
-                    task_locked->task();
+                    task_locked->task(std::chrono::duration_cast<std::chrono::milliseconds>(cur_time - task_locked->last_launch));
                     //do we need to repeat task
                     if(task_locked->is_repeat)
                     {
+                    	task_locked->last_launch = cur_time;
                         task_locked->next_launch = cur_time + task_locked->interval;
                         ++it;
                     }
                     else
                     {
                         task_locked->is_ended = true;
+                        task_locked->last_launch = cur_time;
                         it = _tasks.erase(it);
                     }
                 }

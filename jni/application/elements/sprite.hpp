@@ -9,9 +9,9 @@
 #define ZEPTOTEST_SPRITE_HPP_
 
 #include "defs.hpp"
-#include "elements/base_element.hpp"
+#include "elements/element_if.hpp"
 
-class sprite_t: public base_element_t
+class sprite_t: public element_if
 {
 public:
 	sprite_t(vec2 const& position, vec2 const& size);

@@ -51,6 +51,7 @@ public:
 		x = (*pVec++);
 		y = (*pVec++);
 	}
+	vec2(const vec3& vec);
 //Operators
 	vec2 operator*(const vec2& rhs) const {
 		vec2 ret;
@@ -613,6 +614,7 @@ public:
 		}
 		return *this;
 	}
+    mat3 &inverse();
 	mat3 transpose() {
 		mat3 ret;
 		ret.f[0] = f[0];

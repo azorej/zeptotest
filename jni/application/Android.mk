@@ -8,6 +8,7 @@ LOCAL_C_INCLUDES += "$(LOCAL_PATH)/../libs/libpng"
 MY_LOCAL_SRC_FILES := $(wildcard $(LOCAL_PATH)/*.cpp) \
 					  $(wildcard $(LOCAL_PATH)/elements/*.cpp) \
 					  $(wildcard $(LOCAL_PATH)/graphics/*.cpp) \
+					  $(wildcard $(LOCAL_PATH)/physics/*.cpp) \
 					  $(wildcard $(LOCAL_PATH)/subsystems/*.cpp) \
 					  $(wildcard $(LOCAL_PATH)/utils/*.cpp)
 

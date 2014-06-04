@@ -14,7 +14,7 @@
 #include <memory>
 #include <chrono>
 
-typedef std::function<void ()> task_t;
+typedef std::function<void (std::chrono::milliseconds)> task_t;
 
 namespace detail
 {
@@ -26,7 +26,8 @@ namespace detail
             , is_repeat(is_repeat)
             , is_ended(false)
         {
-            next_launch = std::chrono::steady_clock::now() + interval;
+        	last_launch = std::chrono::steady_clock::now();
+            next_launch = last_launch  + interval;
         }
 
         const task_t task;
@@ -34,6 +35,7 @@ namespace detail
         const bool is_repeat;
         bool is_ended;
         std::chrono::time_point<std::chrono::steady_clock> next_launch;
+        std::chrono::time_point<std::chrono::steady_clock> last_launch;
     };
 }
 
