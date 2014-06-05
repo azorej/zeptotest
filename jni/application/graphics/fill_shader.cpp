@@ -72,7 +72,9 @@ void fill_shader_t::set_color(const vec4& color)
 
 void fill_shader_t::set_vertices(const std::vector<GLfloat>& vertices)
 {
-	_indices_count = vertices.size();
+	//вершина описывается 2 координатами
+	_indices_count = vertices.size()/2;
+
 	glBindBuffer(GL_ARRAY_BUFFER, _vbo);
 	glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(vertices.size()*sizeof(GLfloat)), vertices.data(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

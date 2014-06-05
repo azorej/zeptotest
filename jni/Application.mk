@@ -1,4 +1,4 @@
-APP_PLATFORM := android-19
+APP_PLATFORM := android-10
 APP_ABI := armeabi
 
 # use this to select gcc instead of clang
@@ -23,4 +23,4 @@ APP_CPPFLAGS += -D__ANDROID__
 APP_CFLAGS += -mfloat-abi=softfp
 APP_CPPFLAGS += -mfloat-abi=softfp
 APP_LDFLAGS += -mfloat-abi=softfp
-#APP_LDFLAGS += -O3
+APP_LDFLAGS += -O3

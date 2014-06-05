@@ -1,6 +1,7 @@
 #include "geometry.hpp"
 
-#include <random>
+#include "utils/random.hpp"
+
 #include <array>
 #include <algorithm>
 #include <ctime>
@@ -40,15 +41,12 @@ polygon_t polygon_t::create_random(size_t verices_count, vec2 const& size)
 {
     my_assert(verices_count > 2);
 
-    //не лучшая идея использовать time как seed, но random_device не всегда реализован
-    std::default_random_engine random_generator((unsigned int)time(0));
-
     std::vector<vec2> verices;
     verices.reserve(verices_count);
 
     //создадим псевдо-случайный случайный треугольник
     std::uniform_real_distribution<float> coord_distribution(50.f, 100.f);
-    auto coord_roll = std::bind(coord_distribution, random_generator);
+    auto coord_roll = std::bind(coord_distribution, my_random_generator());
     verices.push_back({100.f - coord_roll(),  coord_roll()});
     verices.push_back({-coord_roll()       , -coord_roll()});
     verices.push_back({coord_roll()        , -coord_roll()});
@@ -57,7 +55,7 @@ polygon_t polygon_t::create_random(size_t verices_count, vec2 const& size)
     {
         //найдем случайную вершину, следующую за ней вершину удалим и заменим на две новые
         std::uniform_int_distribution<size_t> vertex_distribution(0, cur_ver_count-1);
-        size_t last_idx = vertex_distribution(random_generator);
+        size_t last_idx = vertex_distribution(my_random_generator());
         size_t cur_idx = (last_idx + 1) % cur_ver_count;
         size_t next_idx = (cur_idx + 1) % cur_ver_count;
 
@@ -66,8 +64,8 @@ polygon_t polygon_t::create_random(size_t verices_count, vec2 const& size)
 
         //найдем случайные точки на этих двух сторонах
         std::uniform_real_distribution<float> line_offset_roll(0.25f, 0.75f);
-        vec2 first_point = lines::get_offset_point(first_side, line_offset_roll(random_generator));
-        vec2 second_point = lines::get_offset_point(second_side, line_offset_roll(random_generator));
+        vec2 first_point = lines::get_offset_point(first_side, line_offset_roll(my_random_generator()));
+        vec2 second_point = lines::get_offset_point(second_side, line_offset_roll(my_random_generator()));
 
         //удаляем старую вершину, ставим вместо неё 2 новых
         verices.emplace(verices.begin() + cur_idx, first_point);

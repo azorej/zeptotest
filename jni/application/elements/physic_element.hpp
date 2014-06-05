@@ -32,19 +32,36 @@ public:
         _world->unregister_object(this);
     }
 
-    virtual void on_collide()
+    //nothing by default
+    virtual void on_collide(physic_element_if*)
     {
 
     }
 
+    //object will move for value 1.f per 1 second by velocity value 1.f (length of vector)
     void set_velocity(vec2 const& v)
     {
-    	_velocity = v;
+        _velocity = v;
     }
     vec2 get_velocity() const
     {
-    	return _velocity;
+        return _velocity;
     }
+
+    //object will rotate for 1 degree per 1 second by rotation speed value 1.f
+    void set_rotation_speed(float spd)
+    {
+        _rotation_speed = spd;
+    }
+    float get_rotation_speed() const
+    {
+        return _rotation_speed;
+    }
+
+    std::shared_ptr<physics::world_t> get_world()
+	{
+    	return _world;
+	}
 
 private:
     vec2 _velocity;

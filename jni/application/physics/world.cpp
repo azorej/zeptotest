@@ -8,7 +8,7 @@
 
 #include <cmath>
 
-#define PHYSICS_UPDATE_FREQUENCY 60.f
+static const float PHYSICS_UPDATE_FREQUENCY = 30.f;
 
 
 namespace physics
@@ -29,34 +29,50 @@ namespace physics
         _time_buffer += dt;
 
         size_t cycles = _time_buffer/_interval;
-        _time_buffer -= _interval * cycles;
 
         for(size_t i=0; i < cycles; ++i)
         {
-            for(auto& obj : _objects)
+        	auto temp_objects = lock_objects();
+
+            for(auto& obj : temp_objects)
             {
-                vec2 path = (obj->get_velocity() * _interval.count())/1000.f;
-                obj->set_position(obj->get_position() + path);
+            	auto p_obj = static_cast<physic_element_if*>(obj.get());
+
+                vec2 path = (p_obj->get_velocity() * _interval.count())/1000.f;
+                p_obj->set_position(obj->get_position() + path);
+                //auto angle = p_obj->get_rotation_speed() * M_PI /(180 * 1000);
+                //p_obj->set_angle( obj->get_angle() + angle );
             }
 
-            detect_collisions();
+            detect_collisions(temp_objects);
 
-            clean_up();
+            clean_up(temp_objects);
         }
+
+        _time_buffer -= _interval * cycles;
     }
 
-    void world_t::detect_collisions()
+    void world_t::detect_collisions(std::vector<std::shared_ptr<element_if> >& objects)
     {
-        for(auto& obj1 : _objects)
+        for(auto& obj1 : objects)
         {
-            auto aabb_1 = obj1->get_aabb();
-            for(auto& obj2 : _objects)
+        	auto p_obj1 = static_cast<physic_element_if*>(obj1.get());
+
+            auto group_1 = p_obj1->get_collision_group();
+            auto aabb_1 = p_obj1->get_aabb();
+            for(auto& obj2 : objects)
             {
-                auto aabb_2 = obj2->get_aabb();
-                if(is_intersect(aabb_1, aabb_2))
+            	auto p_obj2 = static_cast<physic_element_if*>(obj2.get());
+
+                auto group_2 = p_obj2->get_collision_group();
+                if(!(group_1 & group_2)) //сталкиваться могут только объекты из разных групп
                 {
-                    obj1->on_collide();
-                    obj2->on_collide();
+                    auto aabb_2 = p_obj2->get_aabb();
+                    if(is_intersect(aabb_1, aabb_2))
+                    {
+                        p_obj1->on_collide(p_obj2);
+                        p_obj2->on_collide(p_obj1);
+                    }
                 }
             }
         }
@@ -74,9 +90,9 @@ namespace physics
 		_objects.erase(remove_me);
 	}
 
-    void world_t::clean_up()
+    void world_t::clean_up(std::vector<std::shared_ptr<element_if> >& objects)
     {
-        for(auto& obj : _objects)
+        for(auto& obj : objects)
         {
             auto aabb = obj->get_aabb();
             auto max_x = aabb.size.x/2 + std::abs(aabb.position.x);
@@ -85,5 +101,19 @@ namespace physics
             if(max_x > _size.x || max_y > _size.y) obj->destroy();
         }
     }
+
+    std::vector<std::shared_ptr<element_if> > world_t::lock_objects()
+	{
+    	std::vector<std::shared_ptr<element_if> > ret;
+    	ret.reserve(_objects.size());
+
+    	for(auto obj : _objects)
+    	{
+    		ret.push_back(obj->shared_from_this());
+    	}
+
+    	return ret;
+	}
+
 
 }//end namespace physics

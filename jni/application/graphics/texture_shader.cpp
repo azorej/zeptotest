@@ -107,7 +107,7 @@ void texture_shader_t::draw()
 	glVertexAttribPointer(ATTRIBUTE_VERTICES, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(ATTRIBUTE_VERTICES);
 
-	glDrawArrays(GL_TRIANGLES, (GLint)0,  (GLsizei)12);
+	glDrawArrays(GL_TRIANGLES, (GLint)0,  (GLsizei)6);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	_cur_tex->deactivate();

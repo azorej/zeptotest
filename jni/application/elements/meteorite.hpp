@@ -21,8 +21,11 @@ public:
 
 	virtual void draw(mat3 const& mvp_matrix) override;
 
+    void on_collide(physic_element_if* other) override;
+
 private:
 	std::vector<float> _vertices;
+    bool is_descedant;
 };
 
 #endif /* ZEPTOTEST_METEORITE_HPP_ */

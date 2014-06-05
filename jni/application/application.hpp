@@ -44,10 +44,8 @@ public:
     	return instance;
     }
 
-    element_if* get_main_window()
-    {
-    	return _main_window.get();
-    }
+    element_if* get_main_window();
+    void set_main_window(element_if* new_main_window);
 
 private:
     application_t() = default;
