@@ -17,24 +17,25 @@
 #include <list>
 #include <memory>
 
-namespace subsystems {
-
-class scheduler_t : private noncopyable_t, public subsystem_t
+namespace subsystems
 {
-public:
-	virtual void start() override;
-	virtual void stop() override;
 
-	void tick();
+    class scheduler_t: private noncopyable_t, public subsystem_t
+    {
+    public:
+        virtual void start() override;
+        virtual void stop() override;
 
-    scheduled_task_t schedule_repeat(task_t const& task, std::chrono::milliseconds interval);
-    scheduled_task_t schedule_once(task_t const& task, std::chrono::milliseconds wait_for);
+        void tick();
 
-    void clear();
+        scheduled_task_t schedule_repeat(task_t const& task, std::chrono::milliseconds interval);
+        scheduled_task_t schedule_once(task_t const& task, std::chrono::milliseconds wait_for);
 
-private:
-    std::list<std::weak_ptr<detail::task_info_t> > _tasks;
-};
+        void clear();
+
+    private:
+        std::list<std::weak_ptr<detail::task_info_t> > _tasks;
+    };
 
 } /* namespace subsystems */
 

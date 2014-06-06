@@ -1,80 +1,80 @@
 /*---------------------------------------------------------------------------
 
-   rpng - simple PNG display program                             rpng-win.c
+ rpng - simple PNG display program                             rpng-win.c
 
-   This program decodes and displays PNG images, with gamma correction and
-   optionally with a user-specified background color (in case the image has
-   transparency).  It is very nearly the most basic PNG viewer possible.
-   This version is for 32-bit Windows; it may compile under 16-bit Windows
-   with a little tweaking (or maybe not).
+ This program decodes and displays PNG images, with gamma correction and
+ optionally with a user-specified background color (in case the image has
+ transparency).  It is very nearly the most basic PNG viewer possible.
+ This version is for 32-bit Windows; it may compile under 16-bit Windows
+ with a little tweaking (or maybe not).
 
-   to do:
-    - handle quoted command-line args (especially filenames with spaces)
-    - have minimum window width:  oh well
-    - use %.1023s to simplify truncation of title-bar string?
+ to do:
+ - handle quoted command-line args (especially filenames with spaces)
+ - have minimum window width:  oh well
+ - use %.1023s to simplify truncation of title-bar string?
 
-  ---------------------------------------------------------------------------
+ ---------------------------------------------------------------------------
 
-   Changelog:
-    - 1.00:  initial public release
-    - 1.01:  modified to allow abbreviated options; fixed long/ulong mis-
-              match; switched to png_jmpbuf() macro
-    - 1.02:  added extra set of parentheses to png_jmpbuf() macro; fixed
-              command-line parsing bug
-    - 1.10:  enabled "message window"/console (thanks to David Geldreich)
-    - 2.00:  dual-licensed (added GNU GPL)
-    - 2.01:  fixed improper display of usage screen on PNG error(s)
+ Changelog:
+ - 1.00:  initial public release
+ - 1.01:  modified to allow abbreviated options; fixed long/ulong mis-
+ match; switched to png_jmpbuf() macro
+ - 1.02:  added extra set of parentheses to png_jmpbuf() macro; fixed
+ command-line parsing bug
+ - 1.10:  enabled "message window"/console (thanks to David Geldreich)
+ - 2.00:  dual-licensed (added GNU GPL)
+ - 2.01:  fixed improper display of usage screen on PNG error(s)
 
-  ---------------------------------------------------------------------------
+ ---------------------------------------------------------------------------
 
-      Copyright (c) 1998-2008 Greg Roelofs.  All rights reserved.
+ Copyright (c) 1998-2008 Greg Roelofs.  All rights reserved.
 
-      This software is provided "as is," without warranty of any kind,
-      express or implied.  In no event shall the author or contributors
-      be held liable for any damages arising in any way from the use of
-      this software.
+ This software is provided "as is," without warranty of any kind,
+ express or implied.  In no event shall the author or contributors
+ be held liable for any damages arising in any way from the use of
+ this software.
 
-      The contents of this file are DUAL-LICENSED.  You may modify and/or
-      redistribute this software according to the terms of one of the
-      following two licenses (at your option):
-
-
-      LICENSE 1 ("BSD-like with advertising clause"):
-
-      Permission is granted to anyone to use this software for any purpose,
-      including commercial applications, and to alter it and redistribute
-      it freely, subject to the following restrictions:
-
-      1. Redistributions of source code must retain the above copyright
-         notice, disclaimer, and this list of conditions.
-      2. Redistributions in binary form must reproduce the above copyright
-         notice, disclaimer, and this list of conditions in the documenta-
-         tion and/or other materials provided with the distribution.
-      3. All advertising materials mentioning features or use of this
-         software must display the following acknowledgment:
-
-            This product includes software developed by Greg Roelofs
-            and contributors for the book, "PNG: The Definitive Guide,"
-            published by O'Reilly and Associates.
+ The contents of this file are DUAL-LICENSED.  You may modify and/or
+ redistribute this software according to the terms of one of the
+ following two licenses (at your option):
 
 
-      LICENSE 2 (GNU GPL v2 or later):
+ LICENSE 1 ("BSD-like with advertising clause"):
 
-      This program is free software; you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation; either version 2 of the License, or
-      (at your option) any later version.
+ Permission is granted to anyone to use this software for any purpose,
+ including commercial applications, and to alter it and redistribute
+ it freely, subject to the following restrictions:
 
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
+ 1. Redistributions of source code must retain the above copyright
+ notice, disclaimer, and this list of conditions.
+ 2. Redistributions in binary form must reproduce the above copyright
+ notice, disclaimer, and this list of conditions in the documenta-
+ tion and/or other materials provided with the distribution.
+ 3. All advertising materials mentioning features or use of this
+ software must display the following acknowledgment:
 
-      You should have received a copy of the GNU General Public License
-      along with this program; if not, write to the Free Software Foundation,
-      Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ This product includes software developed by Greg Roelofs
+ and contributors for the book, "PNG: The Definitive Guide,"
+ published by O'Reilly and Associates.
 
-  ---------------------------------------------------------------------------*/
+
+ LICENSE 2 (GNU GPL v2 or later):
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software Foundation,
+ Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+ ---------------------------------------------------------------------------*/
 
 #define PROGNAME  "rpng-win"
 #define LONGNAME  "Simple PNG Viewer for Windows"
@@ -95,18 +95,18 @@
 #include <sys/ioctl.h>
 int repl_getch( void )
 {
-  char ch;
-  int fd = fileno(stdin);
-  struct termio old_tty, new_tty;
+    char ch;
+    int fd = fileno(stdin);
+    struct termio old_tty, new_tty;
 
-  ioctl(fd, TCGETA, &old_tty);
-  new_tty = old_tty;
-  new_tty.c_lflag &= ~(ICANON | ECHO | ISIG);
-  ioctl(fd, TCSETA, &new_tty);
-  fread(&ch, 1, sizeof(ch), stdin);
-  ioctl(fd, TCSETA, &old_tty);
+    ioctl(fd, TCGETA, &old_tty);
+    new_tty = old_tty;
+    new_tty.c_lflag &= ~(ICANON | ECHO | ISIG);
+    ioctl(fd, TCSETA, &new_tty);
+    fread(&ch, 1, sizeof(ch), stdin);
+    ioctl(fd, TCSETA, &old_tty);
 
-  return ch;
+    return ch;
 }
 #define _getch repl_getch
 #else
@@ -116,7 +116,6 @@ int repl_getch( void )
 /* #define DEBUG  :  this enables the Trace() macros */
 
 #include "readpng.h"    /* typedefs, common macros, readpng prototypes */
-
 
 /* could just include png.h, but this macro is the only thing we need
  * (name and typedefs changed to local versions); note that side effects
@@ -129,13 +128,11 @@ int repl_getch( void )
     (composite) = (uch)((temp + (temp >> 8)) >> 8);               \
 }
 
-
 /* local prototypes */
-static int        rpng_win_create_window(HINSTANCE hInst, int showmode);
-static int        rpng_win_display_image(void);
-static void       rpng_win_cleanup(void);
-LRESULT CALLBACK  rpng_win_wndproc(HWND, UINT, WPARAM, LPARAM);
-
+static int rpng_win_create_window(HINSTANCE hInst, int showmode);
+static int rpng_win_display_image(void);
+static void rpng_win_cleanup(void);
+LRESULT CALLBACK rpng_win_wndproc( HWND, UINT, WPARAM, LPARAM);
 
 static char titlebar[1024];
 static char *progname = PROGNAME;
@@ -144,7 +141,7 @@ static char *filename;
 static FILE *infile;
 
 static char *bgstr;
-static uch bg_red=0, bg_green=0, bg_blue=0;
+static uch bg_red = 0, bg_green = 0, bg_blue = 0;
 
 static double display_exponent;
 
@@ -159,9 +156,6 @@ static uch *wimage_data;
 static BITMAPINFOHEADER *bmih;
 
 static HWND global_hwnd;
-
-
-
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR cmd, int showmode)
 {
@@ -425,16 +419,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR cmd, int showmode)
 
     /* decode the image, all at once */
 
-    Trace((stderr, "calling readpng_get_image()\n"))
-    image_data = readpng_get_image(display_exponent, &image_channels,
+    Trace((stderr, "calling readpng_get_image()\n"))image_data = readpng_get_image(display_exponent, &image_channels,
       &image_rowbytes);
-    Trace((stderr, "done with readpng_get_image()\n"))
+    Trace(
+        (stderr, "done with readpng_get_image()\n"))
 
+/* done with PNG file, so clean up to minimize memory usage (but do NOT
+ * nuke image_data!) */
 
-    /* done with PNG file, so clean up to minimize memory usage (but do NOT
-     * nuke image_data!) */
-
-    readpng_cleanup(FALSE);
+readpng_cleanup(FALSE);
     fclose(infile);
 
     if (!image_data) {
@@ -445,284 +438,281 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, PSTR cmd, int showmode)
 
     /* display image (composite with background if requested) */
 
-    Trace((stderr, "calling rpng_win_display_image()\n"))
-    if (rpng_win_display_image()) {
+    Trace((stderr, "calling rpng_win_display_image()\n"))if (rpng_win_display_image()) {
         free(image_data);
         exit(4);
     }
-    Trace((stderr, "done with rpng_win_display_image()\n"))
+    Trace(
+        (stderr, "done with rpng_win_display_image()\n"))
 
+/* wait for the user to tell us when to quit */
 
-    /* wait for the user to tell us when to quit */
-
-    printf(
+printf(
 #ifndef __CYGWIN__
-      "Done.  Press Q, Esc or mouse button 1 (within image window) to quit.\n"
+        "Done.  Press Q, Esc or mouse button 1 (within image window) to quit.\n"
 #else
-      "Done.  Press mouse button 1 (within image window) to quit.\n"
+        "Done.  Press mouse button 1 (within image window) to quit.\n"
 #endif
-    );
-    fflush(stdout);
+);
+fflush(stdout);
 
-    while (GetMessage(&msg, NULL, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-
-
-    /* OK, we're done:  clean up all image and Windows resources and go away */
-
-    rpng_win_cleanup();
-
-    return msg.wParam;
+while (GetMessage(&msg, NULL, 0, 0))
+{
+    TranslateMessage(&msg);
+    DispatchMessage(&msg);
 }
 
+/* OK, we're done:  clean up all image and Windows resources and go away */
 
+rpng_win_cleanup();
 
-
+return msg.wParam;
+}
 
 static int rpng_win_create_window(HINSTANCE hInst, int showmode)
 {
-    uch *dest;
-    int extra_width, extra_height;
-    ulg i, j;
-    WNDCLASSEX wndclass;
-
+uch *dest;
+int extra_width, extra_height;
+ulg i, j;
+WNDCLASSEX wndclass;
 
 /*---------------------------------------------------------------------------
-    Allocate memory for the display-specific version of the image (round up
-    to multiple of 4 for Windows DIB).
-  ---------------------------------------------------------------------------*/
+ Allocate memory for the display-specific version of the image (round up
+ to multiple of 4 for Windows DIB).
+ ---------------------------------------------------------------------------*/
 
-    wimage_rowbytes = ((3*image_width + 3L) >> 2) << 2;
+wimage_rowbytes = ((3 * image_width + 3L) >> 2) << 2;
 
-    if (!(dib = (uch *)malloc(sizeof(BITMAPINFOHEADER) +
-                              wimage_rowbytes*image_height)))
+if (!(dib = (uch *) malloc(
+        sizeof(BITMAPINFOHEADER) + wimage_rowbytes * image_height)))
+{
+    return 4; /* fail */
+}
+
+/*---------------------------------------------------------------------------
+ Initialize the DIB.  Negative height means to use top-down BMP ordering
+ (must be uncompressed, but that's what we want).  Bit count of 1, 4 or 8
+ implies a colormap of RGBX quads, but 24-bit BMPs just use B,G,R values
+ directly => wimage_data begins immediately after BMP header.
+ ---------------------------------------------------------------------------*/
+
+memset(dib, 0, sizeof(BITMAPINFOHEADER));
+bmih = (BITMAPINFOHEADER *) dib;
+bmih->biSize = sizeof(BITMAPINFOHEADER);
+bmih->biWidth = image_width;
+bmih->biHeight = -((long) image_height);
+bmih->biPlanes = 1;
+bmih->biBitCount = 24;
+bmih->biCompression = 0;
+wimage_data = dib + sizeof(BITMAPINFOHEADER);
+
+/*---------------------------------------------------------------------------
+ Fill in background color (black by default); data are in BGR order.
+ ---------------------------------------------------------------------------*/
+
+for (j = 0; j < image_height; ++j)
+{
+    dest = wimage_data + j * wimage_rowbytes;
+    for (i = image_width; i > 0; --i)
     {
-        return 4;   /* fail */
+        *dest++ = bg_blue;
+        *dest++ = bg_green;
+        *dest++ = bg_red;
     }
+}
 
 /*---------------------------------------------------------------------------
-    Initialize the DIB.  Negative height means to use top-down BMP ordering
-    (must be uncompressed, but that's what we want).  Bit count of 1, 4 or 8
-    implies a colormap of RGBX quads, but 24-bit BMPs just use B,G,R values
-    directly => wimage_data begins immediately after BMP header.
-  ---------------------------------------------------------------------------*/
+ Set the window parameters.
+ ---------------------------------------------------------------------------*/
 
-    memset(dib, 0, sizeof(BITMAPINFOHEADER));
-    bmih = (BITMAPINFOHEADER *)dib;
-    bmih->biSize = sizeof(BITMAPINFOHEADER);
-    bmih->biWidth = image_width;
-    bmih->biHeight = -((long)image_height);
-    bmih->biPlanes = 1;
-    bmih->biBitCount = 24;
-    bmih->biCompression = 0;
-    wimage_data = dib + sizeof(BITMAPINFOHEADER);
+memset(&wndclass, 0, sizeof(wndclass));
 
-/*---------------------------------------------------------------------------
-    Fill in background color (black by default); data are in BGR order.
-  ---------------------------------------------------------------------------*/
+wndclass.cbSize = sizeof(wndclass);
+wndclass.style = CS_HREDRAW | CS_VREDRAW;
+wndclass.lpfnWndProc = rpng_win_wndproc;
+wndclass.hInstance = hInst;
+wndclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
+wndclass.hbrBackground = (HBRUSH) GetStockObject(DKGRAY_BRUSH);
+wndclass.lpszMenuName = NULL;
+wndclass.lpszClassName = progname;
+wndclass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
-    for (j = 0;  j < image_height;  ++j) {
-        dest = wimage_data + j*wimage_rowbytes;
-        for (i = image_width;  i > 0;  --i) {
-            *dest++ = bg_blue;
-            *dest++ = bg_green;
-            *dest++ = bg_red;
-        }
-    }
+RegisterClassEx(&wndclass);
 
 /*---------------------------------------------------------------------------
-    Set the window parameters.
-  ---------------------------------------------------------------------------*/
+ Finally, create the window.
+ ---------------------------------------------------------------------------*/
 
-    memset(&wndclass, 0, sizeof(wndclass));
+extra_width = 2
+        * (GetSystemMetrics(SM_CXBORDER) + GetSystemMetrics(SM_CXDLGFRAME));
+extra_height = 2
+        * (GetSystemMetrics(SM_CYBORDER) + GetSystemMetrics(SM_CYDLGFRAME))
+        + GetSystemMetrics(SM_CYCAPTION);
 
-    wndclass.cbSize = sizeof(wndclass);
-    wndclass.style = CS_HREDRAW | CS_VREDRAW;
-    wndclass.lpfnWndProc = rpng_win_wndproc;
-    wndclass.hInstance = hInst;
-    wndclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-    wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wndclass.hbrBackground = (HBRUSH)GetStockObject(DKGRAY_BRUSH);
-    wndclass.lpszMenuName = NULL;
-    wndclass.lpszClassName = progname;
-    wndclass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+global_hwnd = CreateWindow(progname, titlebar, WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, CW_USEDEFAULT, image_width + extra_width,
+        image_height + extra_height, NULL, NULL, hInst, NULL);
 
-    RegisterClassEx(&wndclass);
+ShowWindow(global_hwnd, showmode);
+UpdateWindow(global_hwnd);
 
-/*---------------------------------------------------------------------------
-    Finally, create the window.
-  ---------------------------------------------------------------------------*/
-
-    extra_width  = 2*(GetSystemMetrics(SM_CXBORDER) +
-                      GetSystemMetrics(SM_CXDLGFRAME));
-    extra_height = 2*(GetSystemMetrics(SM_CYBORDER) +
-                      GetSystemMetrics(SM_CYDLGFRAME)) +
-                      GetSystemMetrics(SM_CYCAPTION);
-
-    global_hwnd = CreateWindow(progname, titlebar, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, CW_USEDEFAULT, image_width+extra_width,
-      image_height+extra_height, NULL, NULL, hInst, NULL);
-
-    ShowWindow(global_hwnd, showmode);
-    UpdateWindow(global_hwnd);
-
-    return 0;
+return 0;
 
 } /* end function rpng_win_create_window() */
 
-
-
-
-
 static int rpng_win_display_image()
 {
-    uch *src, *dest;
-    uch r, g, b, a;
-    ulg i, row, lastrow;
-    RECT rect;
+uch *src, *dest;
+uch r, g, b, a;
+ulg i, row, lastrow;
+RECT rect;
 
-
-    Trace((stderr, "beginning display loop (image_channels == %d)\n",
-      image_channels))
-    Trace((stderr, "(width = %ld, rowbytes = %ld, wimage_rowbytes = %d)\n",
-      image_width, image_rowbytes, wimage_rowbytes))
-
+Trace(
+        (stderr, "beginning display loop (image_channels == %d)\n", image_channels))Trace(
+        (stderr, "(width = %ld, rowbytes = %ld, wimage_rowbytes = %d)\n", image_width, image_rowbytes, wimage_rowbytes))
 
 /*---------------------------------------------------------------------------
-    Blast image data to buffer.  This whole routine takes place before the
-    message loop begins, so there's no real point in any pseudo-progressive
-    display...
-  ---------------------------------------------------------------------------*/
+ Blast image data to buffer.  This whole routine takes place before the
+ message loop begins, so there's no real point in any pseudo-progressive
+ display...
+ ---------------------------------------------------------------------------*/
 
-    for (lastrow = row = 0;  row < image_height;  ++row) {
-        src = image_data + row*image_rowbytes;
-        dest = wimage_data + row*wimage_rowbytes;
-        if (image_channels == 3) {
-            for (i = image_width;  i > 0;  --i) {
-                r = *src++;
-                g = *src++;
-                b = *src++;
+for (lastrow = row = 0; row < image_height; ++row)
+{
+    src = image_data + row * image_rowbytes;
+    dest = wimage_data + row * wimage_rowbytes;
+    if (image_channels == 3)
+    {
+        for (i = image_width; i > 0; --i)
+        {
+            r = *src++;
+            g = *src++;
+            b = *src++;
+            *dest++ = b;
+            *dest++ = g; /* note reverse order */
+            *dest++ = r;
+        }
+    }
+    else /* if (image_channels == 4) */
+    {
+        for (i = image_width; i > 0; --i)
+        {
+            r = *src++;
+            g = *src++;
+            b = *src++;
+            a = *src++;
+            if (a == 255)
+            {
                 *dest++ = b;
-                *dest++ = g;   /* note reverse order */
+                *dest++ = g;
                 *dest++ = r;
             }
-        } else /* if (image_channels == 4) */ {
-            for (i = image_width;  i > 0;  --i) {
-                r = *src++;
-                g = *src++;
-                b = *src++;
-                a = *src++;
-                if (a == 255) {
-                    *dest++ = b;
-                    *dest++ = g;
-                    *dest++ = r;
-                } else if (a == 0) {
-                    *dest++ = bg_blue;
-                    *dest++ = bg_green;
-                    *dest++ = bg_red;
-                } else {
-                    /* this macro (copied from png.h) composites the
-                     * foreground and background values and puts the
-                     * result into the first argument; there are no
-                     * side effects with the first argument */
-                    alpha_composite(*dest++, b, a, bg_blue);
-                    alpha_composite(*dest++, g, a, bg_green);
-                    alpha_composite(*dest++, r, a, bg_red);
-                }
+            else if (a == 0)
+            {
+                *dest++ = bg_blue;
+                *dest++ = bg_green;
+                *dest++ = bg_red;
+            }
+            else
+            {
+                /* this macro (copied from png.h) composites the
+                 * foreground and background values and puts the
+                 * result into the first argument; there are no
+                 * side effects with the first argument */
+                alpha_composite(*dest++, b, a, bg_blue);
+                alpha_composite(*dest++, g, a, bg_green);
+                alpha_composite(*dest++, r, a, bg_red);
             }
         }
-        /* display after every 16 lines */
-        if (((row+1) & 0xf) == 0) {
-            rect.left = 0L;
-            rect.top = (LONG)lastrow;
-            rect.right = (LONG)image_width;      /* possibly off by one? */
-            rect.bottom = (LONG)lastrow + 16L;   /* possibly off by one? */
-            InvalidateRect(global_hwnd, &rect, FALSE);
-            UpdateWindow(global_hwnd);     /* similar to XFlush() */
-            lastrow = row + 1;
-        }
     }
-
-    Trace((stderr, "calling final image-flush routine\n"))
-    if (lastrow < image_height) {
+    /* display after every 16 lines */
+    if (((row + 1) & 0xf) == 0)
+    {
         rect.left = 0L;
-        rect.top = (LONG)lastrow;
-        rect.right = (LONG)image_width;      /* possibly off by one? */
-        rect.bottom = (LONG)image_height;    /* possibly off by one? */
+        rect.top = (LONG) lastrow;
+        rect.right = (LONG) image_width; /* possibly off by one? */
+        rect.bottom = (LONG) lastrow + 16L; /* possibly off by one? */
         InvalidateRect(global_hwnd, &rect, FALSE);
-        UpdateWindow(global_hwnd);     /* similar to XFlush() */
+        UpdateWindow(global_hwnd); /* similar to XFlush() */
+        lastrow = row + 1;
     }
-
-/*
-    last param determines whether or not background is wiped before paint
-    InvalidateRect(global_hwnd, NULL, TRUE);
-    UpdateWindow(global_hwnd);
- */
-
-    return 0;
 }
 
+Trace((stderr, "calling final image-flush routine\n"))
+if (lastrow < image_height)
+{
+    rect.left = 0L;
+    rect.top = (LONG) lastrow;
+    rect.right = (LONG) image_width; /* possibly off by one? */
+    rect.bottom = (LONG) image_height; /* possibly off by one? */
+    InvalidateRect(global_hwnd, &rect, FALSE);
+    UpdateWindow(global_hwnd); /* similar to XFlush() */
+}
 
+/*
+ last param determines whether or not background is wiped before paint
+ InvalidateRect(global_hwnd, NULL, TRUE);
+ UpdateWindow(global_hwnd);
+ */
 
-
+return 0;
+}
 
 static void rpng_win_cleanup()
 {
-    if (image_data) {
-        free(image_data);
-        image_data = NULL;
-    }
-
-    if (dib) {
-        free(dib);
-        dib = NULL;
-    }
+if (image_data)
+{
+    free(image_data);
+    image_data = NULL;
 }
 
-
-
-
+if (dib)
+{
+    free(dib);
+    dib = NULL;
+}
+}
 
 LRESULT CALLBACK rpng_win_wndproc(HWND hwnd, UINT iMsg, WPARAM wP, LPARAM lP)
 {
-    HDC         hdc;
-    PAINTSTRUCT ps;
-    int rc;
+HDC hdc;
+PAINTSTRUCT ps;
+int rc;
 
-    switch (iMsg) {
-        case WM_CREATE:
-            /* one-time processing here, if any */
-            return 0;
+switch (iMsg)
+{
+    case WM_CREATE:
+        /* one-time processing here, if any */
+        return 0;
 
-        case WM_PAINT:
-            hdc = BeginPaint(hwnd, &ps);
-                    /*                    dest                          */
-            rc = StretchDIBits(hdc, 0, 0, image_width, image_height,
-                    /*                    source                        */
-                                    0, 0, image_width, image_height,
-                                    wimage_data, (BITMAPINFO *)bmih,
-                    /*              iUsage: no clue                     */
-                                    0, SRCCOPY);
-            EndPaint(hwnd, &ps);
-            return 0;
+    case WM_PAINT:
+        hdc = BeginPaint(hwnd, &ps);
+        /*                    dest                          */
+        rc = StretchDIBits(hdc, 0, 0, image_width, image_height,
+        /*                    source                        */
+        0, 0, image_width, image_height, wimage_data, (BITMAPINFO *) bmih,
+        /*              iUsage: no clue                     */
+        0, SRCCOPY);
+        EndPaint(hwnd, &ps);
+        return 0;
 
         /* wait for the user to tell us when to quit */
-        case WM_CHAR:
-            switch (wP) {      /* only need one, so ignore repeat count */
-                case 'q':
-                case 'Q':
-                case 0x1B:     /* Esc key */
-                    PostQuitMessage(0);
-            }
-            return 0;
+    case WM_CHAR:
+        switch (wP)
+        { /* only need one, so ignore repeat count */
+            case 'q':
+            case 'Q':
+            case 0x1B: /* Esc key */
+                PostQuitMessage(0);
+        }
+        return 0;
 
-        case WM_LBUTTONDOWN:   /* another way of quitting */
-        case WM_DESTROY:
-            PostQuitMessage(0);
-            return 0;
-    }
+    case WM_LBUTTONDOWN: /* another way of quitting */
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        return 0;
+}
 
-    return DefWindowProc(hwnd, iMsg, wP, lP);
+return DefWindowProc(hwnd, iMsg, wP, lP);
 }

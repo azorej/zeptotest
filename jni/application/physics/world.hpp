@@ -26,7 +26,7 @@ namespace physics
         COLLISION_GROUP_6 = COLLISION_GROUP_5 << 1
     };
 
-    class world_t : private noncopyable_t
+    class world_t: private noncopyable_t
     {
     public:
         world_t();
@@ -38,8 +38,8 @@ namespace physics
 
         void set_size(vec2 const& size)
         {
-			_size = size;
-		}
+            _size = size;
+        }
 
     private:
         scheduled_task_t _update_task;
@@ -52,10 +52,11 @@ namespace physics
 
         void detect_collisions(std::vector<std::shared_ptr<element_if> >& objects);
         void clean_up(std::vector<std::shared_ptr<element_if> >& objects);
-        //перед операциями со списками необходимо защититься от удаления объектов во время переборов контейнера
+
+        //Because objects can be deleted upon collision with others, we have to prolongate their life until full phisics cycle is completed
         std::vector<std::shared_ptr<element_if> > lock_objects();
     };
 
-}//end namespace physic
+} //end namespace physic
 
-#endif // ZEPTOTEST_PHYSICS_WORLD_HPP
+#endif // ZEPTOTEST_PHYSICS_WORLD_HPP

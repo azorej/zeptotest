@@ -7,27 +7,27 @@
 
 #include <GLES2/gl2.h>
 
-class texture_shader_t : public shader_program_if
+class texture_shader_t: public shader_program_if
 {
 public:
-	texture_shader_t();
+    texture_shader_t();
 
-	void set_texture(texture_t* tex);
+    void set_texture(texture_t* tex);
 
 private:
-	GLint _u_texture;
-	GLuint _vbo;
+    GLint _u_texture;
+    GLuint _vbo;
 
-	texture_t* _cur_tex;
+    texture_t* _cur_tex;
 
-	virtual void do_release() override;
-	virtual void draw() override;
-	virtual void bind_attribute_locations() override;
+    virtual void do_release() override;
+    virtual void draw() override;
+    virtual void bind_attribute_locations() override;
 
-	enum
-	{
-		ATTRIBUTE_VERTICES
-	};
+    enum
+    {
+        ATTRIBUTE_VERTICES
+    };
 };
 
-#endif // ZEPTOTEST_TEXTURE_SHADER_HPP
+#endif // ZEPTOTEST_TEXTURE_SHADER_HPP

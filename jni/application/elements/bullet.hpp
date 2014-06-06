@@ -5,7 +5,7 @@
 #include "physic_element.hpp"
 #include "utils/vecmath.hpp"
 
-class bullet_t : public physic_element_if
+class bullet_t: public physic_element_if
 {
 public:
     bullet_t(vec2 const& position, vec2 const& direction, std::shared_ptr<physics::world_t> world);
@@ -13,4 +13,4 @@ public:
     void on_collide(physic_element_if *other);
 };
 
-#endif // ZEPTOTEST_BULLET_HPP
+#endif // ZEPTOTEST_BULLET_HPP

@@ -6,17 +6,21 @@
 #include "graphics/texture_shader.hpp"
 
 element_if::element_if(vec2 const& position, vec2 const& size)
-: _position(position)
-, _size(size)
-, _angle(0)
-, _matrixes_changed(true)
-, _parent(nullptr)
-, _collision_group(0)
+        : _position(position),
+          _size(size),
+          _angle(0),
+          _matrixes_changed(true),
+          _parent(nullptr),
+          _collision_group(0)
 {
 }
 
 element_if::~element_if()
 {
+    for (auto& child : _children)
+    {
+        child->set_parent(0);
+    }
 }
 
 void element_if::do_draw(mat3 const& vp_matrix)
@@ -25,7 +29,7 @@ void element_if::do_draw(mat3 const& vp_matrix)
 
     draw_background(new_vp_matrix);
     draw(new_vp_matrix);
-    for(auto& child_ptr : _children)
+    for (auto& child_ptr : _children)
     {
         child_ptr->do_draw(new_vp_matrix);
     }
@@ -33,9 +37,9 @@ void element_if::do_draw(mat3 const& vp_matrix)
 
 void element_if::remove_child(element_if* child)
 {
-    for(auto& child_ptr : _children)
+    for (auto& child_ptr : _children)
     {
-        if(child_ptr.get() == child)
+        if (child_ptr.get() == child)
         {
             _children.remove(child_ptr);
             break;
@@ -46,7 +50,7 @@ void element_if::remove_child(element_if* child)
 void element_if::set_angle(float angle)
 {
     _matrixes_changed = true;
-    _angle = angle * 180.f/M_PI;
+    _angle = angle * 180.f / M_PI;
 }
 
 float element_if::get_angle() const
@@ -78,24 +82,25 @@ vec2 element_if::get_size() const
 
 mat3 element_if::parent_to_child_matrix()
 {
-    if(_matrixes_changed) calculate_transform_matrixes();
+    if (_matrixes_changed) calculate_transform_matrixes();
     return _parent_to_child_mat;
 }
 
 mat3 element_if::child_to_parent_matrix()
 {
-    if(_matrixes_changed) calculate_transform_matrixes();
+    if (_matrixes_changed) calculate_transform_matrixes();
     return _child_to_parent_mat;
 }
 
 rect_t element_if::get_aabb() const
 {
-    return {_size, _position};
+    return
+    {   _size, _position};
 }
 
 void element_if::destroy()
 {
-    if(_parent) _parent->remove_child(this);
+    if (_parent) _parent->remove_child(this);
 }
 
 void element_if::set_parent(element_if* parent)
@@ -104,7 +109,7 @@ void element_if::set_parent(element_if* parent)
 }
 element_if* element_if::get_parent()
 {
-	return _parent;
+    return _parent;
 }
 
 void element_if::set_collision_group(uint8_t group)
@@ -123,12 +128,14 @@ void element_if::set_background(std::string const& file_name)
 
 void element_if::draw_background(mat3 const& mvp_matrix)
 {
-    if(!_background.empty())
+    if (!_background.empty())
     {
         auto& graph_sys = application_t::singleton().subsystem<subsystems::graphic_t>();
         auto& shader = graph_sys.get_shader<texture_shader_t>();
 
-        shader.set_texture(application_t::singleton().subsystem<subsystems::resource_manager_t>().get_texture(_background.c_str()));
+        shader.set_texture(
+                application_t::singleton().subsystem<subsystems::resource_manager_t>().get_texture(
+                        _background.c_str()));
         shader.activate(mvp_matrix);
     }
 }
@@ -137,15 +144,15 @@ element_if* element_if::get_child(vec2 const& coord)
 {
     element_if* ret = 0;
 
-    //проходим в обратном порядке, т.к. объекты ниже по списку - выше по глубине
-    for(auto it=_children.rbegin(), end=_children.rend(); it!=end; ++it)
+    //reverse order
+    for (auto it = _children.rbegin(), end = _children.rend(); it != end; ++it)
     {
-    	auto aabb = (*it)->get_aabb();
-		if(is_intersect(coord, aabb))
-		{
-			ret = (*it).get();
-			break;
-		}
+        auto aabb = (*it)->get_aabb();
+        if (is_intersect(coord, aabb))
+        {
+            ret = (*it).get();
+            break;
+        }
     }
 
     return ret;
@@ -153,7 +160,8 @@ element_if* element_if::get_child(vec2 const& coord)
 
 void element_if::calculate_transform_matrixes()
 {
-    _child_to_parent_mat = mat3::translation(_position.x, _position.y) * mat3::rotation(_angle) * mat3::scaling(_size.x/COORDINATE_FACTOR, _size.y/COORDINATE_FACTOR);
+    _child_to_parent_mat = mat3::translation(_position.x, _position.y) * mat3::rotation(_angle)
+            * mat3::scaling(_size.x / COORDINATE_FACTOR, _size.y / COORDINATE_FACTOR);
     _parent_to_child_mat = _child_to_parent_mat;
     _parent_to_child_mat.inverse();
 

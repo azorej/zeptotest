@@ -18,23 +18,24 @@
 
 #include <map>
 
-namespace subsystems {
-
-class input_controller_t  : private noncopyable_t, public subsystem_t
+namespace subsystems
 {
-public:
-	input_controller_t();
 
-	virtual void start() override;
-	virtual void stop() override;
+    class input_controller_t: private noncopyable_t, public subsystem_t
+    {
+    public:
+        input_controller_t();
 
-	void on_touch(AInputEvent* event);
+        virtual void start() override;
+        virtual void stop() override;
 
-private:
-	std::map<int32_t, touch_t> _touches;
+        void on_touch(AInputEvent* event);
 
-	bool _is_enabled;
-};
+    private:
+        std::map<int32_t, touch_t> _touches;
+
+        bool _is_enabled;
+    };
 
 } /* namespace subsystems */
 

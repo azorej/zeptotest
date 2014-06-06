@@ -29,18 +29,19 @@
 # define	my_assert(e)	((e) ? (void)0 : LOG_FATAL_ERROR("Assert on %s : %i. Function: %s. Message: %s", __FILE__, __LINE__, __func__, #e))
 #endif
 
-struct type_info_comparator {
-    bool operator ()(const std::type_info* a, const std::type_info* b) const {
+struct type_info_comparator
+{
+    bool operator ()(const std::type_info* a, const std::type_info* b) const
+    {
         return a->before(*b);
     }
 };
 
-
 //guards for auto-cleaning resoures and etc.
-template <typename T, typename Deleter>
+template<typename T, typename Deleter>
 std::unique_ptr<T, Deleter> make_guard(T* ptr, Deleter&& d)
 {
-	return std::unique_ptr<T, Deleter>(ptr, d);
+    return std::unique_ptr<T, Deleter>(ptr, d);
 }
 
 #define MAKE_GUARD(ptr, deleter) auto ptr##_guard = make_guard(ptr, deleter)

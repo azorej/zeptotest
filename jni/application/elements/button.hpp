@@ -7,7 +7,7 @@
 #include <functional>
 #include <memory>
 
-class button_t : public element_if
+class button_t: public element_if
 {
 public:
     button_t(std::string const& texture_name, vec2 const& pos, vec2 const& size);
@@ -21,4 +21,4 @@ private:
     bool _is_set;
 };
 
-#endif // ZEPTOTEST_BUTTON_HPP
+#endif // ZEPTOTEST_BUTTON_HPP

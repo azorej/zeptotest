@@ -10,7 +10,7 @@
 class touch_t
 {
 public:
-    typedef std::function<void (touch_t* )> touch_callback_t;
+    typedef std::function<void(touch_t*)> touch_callback_t;
 
     explicit touch_t(vec2 const& begin);
 
@@ -42,4 +42,4 @@ private:
     mat3 _transform_mat;
 };
 
-#endif // ZEPTOTEST_TOUCH_HPP
+#endif // ZEPTOTEST_TOUCH_HPP

@@ -19,7 +19,7 @@
 #include <cmath>
 #include <string>
 
-class element_if : public std::enable_shared_from_this<element_if>
+class element_if: public std::enable_shared_from_this<element_if>
 {
 public:
     element_if(vec2 const& position, vec2 const& size);
@@ -33,7 +33,7 @@ public:
 
     void do_draw(mat3 const& vp_matrix);
 
-    template <typename T>
+    template<typename T>
     T* add_child(T* child);
 
     void remove_child(element_if* child);
@@ -55,7 +55,7 @@ public:
 
         auto pos = touch.get_begin();
         auto child = get_child(pos);
-        if(child) child->on_touch(touch);
+        if (child) child->on_touch(touch);
     }
 
     mat3 parent_to_child_matrix();
@@ -75,10 +75,10 @@ public:
 
 protected:
     std::list<std::shared_ptr<element_if> > _children;
-	vec2 _position;
-	vec2 _size;
-	float _angle;
-	element_if* _parent;
+    vec2 _position;
+    vec2 _size;
+    float _angle;
+    element_if* _parent;
 
     uint8_t _collision_group;
 
@@ -93,14 +93,12 @@ protected:
     void draw_background(const mat3 &mvp_matrix);
 };
 
-template <typename T>
+template<typename T>
 T* element_if::add_child(T* child)
 {
     _children.push_back(std::shared_ptr<element_if>(child));
     child->set_parent(this);
     return child;
 }
-
-
 
 #endif /* ZEPTOTEST_BASE_ELEMENT_HPP_ */

@@ -11,7 +11,7 @@
 #include "defs.hpp"
 #include "elements/element_if.hpp"
 
-class main_window_if : public element_if
+class main_window_if: public element_if
 {
 public:
     main_window_if();
@@ -23,6 +23,5 @@ inline main_window_if::~main_window_if()
 {
 
 }
-
 
 #endif /* ZEPTOTEST_MAIN_WINDOW_HPP_ */

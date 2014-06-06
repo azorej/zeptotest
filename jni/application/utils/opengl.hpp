@@ -25,19 +25,18 @@
 
 inline bool check_gl_errors()
 {
-	bool is_error = false;
-	while(glGetError() != GL_NO_ERROR)
-	{
-		is_error = true;
-	}
+    bool is_error = false;
+    while (glGetError() != GL_NO_ERROR)
+    {
+        is_error = true;
+    }
 
-	return is_error;
+    return is_error;
 }
 
 inline void check_gl_errors_and_throw(const char* msg)
 {
-	if(check_gl_errors()) throw std::runtime_error(msg);
+    if (check_gl_errors()) throw std::runtime_error(msg);
 }
-
 
 #endif /* ZEPTOTEST_OPENGL_UTILS_HPP_ */

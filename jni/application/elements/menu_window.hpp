@@ -4,10 +4,10 @@
 #include "defs.hpp"
 #include "elements/main_window.hpp"
 
-class menu_window_t : public main_window_if
+class menu_window_t: public main_window_if
 {
 public:
     menu_window_t();
 };
 
-#endif // ZEPTOTEST_MENU_WINDOW_HPP
+#endif // ZEPTOTEST_MENU_WINDOW_HPP

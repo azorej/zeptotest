@@ -14,7 +14,7 @@
 					<folderInfo id="com.android.toolchain.gcc.1158468428.902719001" name="/" resourcePath="">
 						<toolChain id="com.android.toolchain.gcc.917395883" name="com.android.toolchain.gcc" superClass="com.android.toolchain.gcc" unusedChildren="com.android.gcc.compiler">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="com.android.targetPlatform.1883297363" isAbstract="false" superClass="com.android.targetPlatform"/>
-							<builder command="ndk-build" id="com.android.builder.1521037260" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Android Builder" superClass="com.android.builder">
+							<builder arguments="" command="ndk-build" id="com.android.builder.1521037260" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Android Builder" superClass="com.android.builder">
 								<outputEntries>
 									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="obj"/>
 									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="libs"/>
@@ -32,6 +32,7 @@
 									<listOptionValue builtIn="false" value="/home/azorej/libs/android/ndk/toolchains/arm-linux-androideabi-4.8/prebuilt/linux-x86/lib/gcc/arm-linux-androideabi/4.8/include-fixed"/>
 									<listOptionValue builtIn="false" value="/home/azorej/libs/android/ndk/toolchains/arm-linux-androideabi-4.8/prebuilt/linux-x86/lib/gcc/arm-linux-androideabi/4.8/include"/>
 									<listOptionValue builtIn="false" value="/home/azorej/libs/android/ndk/sources/android/native_app_glue"/>
+									<listOptionValue builtIn="false" value="/home/azorej/libs/android/ndk/platforms/android-9/arch-arm/usr/include/android"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.llvm.cpp.compiler.input.1168767724" superClass="cdt.managedbuild.tool.llvm.cpp.compiler.input"/>
 							</tool>

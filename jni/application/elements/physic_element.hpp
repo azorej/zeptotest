@@ -15,14 +15,14 @@
 
 #include <memory>
 
-class physic_element_if : public element_if
+class physic_element_if: public element_if
 {
 public:
     physic_element_if(vec2 const& position, vec2 const& size, std::shared_ptr<physics::world_t> world)
-    : element_if(position, size)
-    , _world(world)
-    , _velocity(0.f, 0.f)
-	, _rotation_speed(0.f)
+            : element_if(position, size),
+              _world(world),
+              _velocity(0.f, 0.f),
+              _rotation_speed(0.f)
     {
         _world->register_object(this);
     }
@@ -59,9 +59,9 @@ public:
     }
 
     std::shared_ptr<physics::world_t> get_world()
-	{
-    	return _world;
-	}
+    {
+        return _world;
+    }
 
 private:
     vec2 _velocity;

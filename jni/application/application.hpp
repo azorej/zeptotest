@@ -16,32 +16,31 @@
 
 #include <memory>
 
-
-class application_t : private noncopyable_t, public master_t
+class application_t: private noncopyable_t, public master_t
 {
 public:
-	void init(android_app* java_app);
+    void init(android_app* java_app);
 
-	/*
-	 * The window is being shown
-	 */
-	void on_shown();
+    /*
+     * The window is being shown
+     */
+    void on_shown();
 
-	/*
-	 * The window is being hidden or closed
-	 */
-	void on_close();
+    /*
+     * The window is being hidden or closed
+     */
+    void on_close();
 
-	void on_save_state();
+    void on_save_state();
 
-	void on_touch(AInputEvent* event);
+    void on_touch(AInputEvent* event);
 
-	void tick();
+    void tick();
 
     static application_t& singleton()
     {
-    	static application_t instance;
-    	return instance;
+        static application_t instance;
+        return instance;
     }
 
     element_if* get_main_window();
@@ -50,7 +49,7 @@ public:
 private:
     application_t() = default;
 
-	android_app* _java_app;
+    android_app* _java_app;
     std::unique_ptr<element_if> _main_window;
 };
 

@@ -19,23 +19,24 @@ struct rect_t
 
     void scale(vec2 const& factor)
     {
-        size*=factor;
+        size *= factor;
     }
 
     void move(vec2 const& vector)
     {
-        position+=vector;
+        position += vector;
     }
 
     vec2 left_bottom() const
     {
-        return {position.x - size.x/2, position.y - size.y/2};
+        return
+        {   position.x - size.x/2, position.y - size.y/2};
     }
-
 
     vec2 right_top() const
     {
-        return {position.x + size.x/2, position.y + size.y/2};
+        return
+        {   position.x + size.x/2, position.y + size.y/2};
     }
 };
 
@@ -76,4 +77,4 @@ bool is_intersect(vec2 const& point, rect_t const& rect);
 bool is_intersect(rect_t const& rect, vec2 const& point);
 bool is_intersect(rect_t const& rect1, rect_t const& rect2);
 
-#endif // POLYGON_HPP
+#endif // POLYGON_HPP

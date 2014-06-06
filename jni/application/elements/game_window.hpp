@@ -13,7 +13,7 @@
 //forward declarations
 class space_ship_t;
 
-class game_window_t : public main_window_if
+class game_window_t: public main_window_if
 {
 public:
     game_window_t();
@@ -23,7 +23,9 @@ public:
 private:
     std::shared_ptr<physics::world_t> _world;
     scheduled_task_t _update_logic_task;
+    scheduled_task_t _move_background_task;
     space_ship_t* _player;
+    uint32_t _level;
 
     std::chrono::milliseconds _time_from_start;
     std::chrono::milliseconds _last_meteor_time;
@@ -31,7 +33,8 @@ private:
     void init_world();
 
     void update_logic(std::chrono::milliseconds dt);
-    void create_meteorite(uint32_t level);
+    void create_meteorite();
+    void create_background();
 };
 
-#endif // GAME_WINDOW_H
+#endif // GAME_WINDOW_H
